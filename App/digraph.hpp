@@ -16,20 +16,20 @@
 #include <assert.h>
 
 /***** Décommenter les include que vous voulez utiliser ******/
-//#include <array>
-//#include <vector>
-//#include <deque>
-//#include <forward_list>
-//#include <list>
-//#include <multiset>
-//#include <multimap>
-//#include <unordered_set>
-//#include <unordered_map>
-//#include <unordered_multiset>
-//#include <unordered_multimap>
-//#include <stack>
-//#include <queue>
-//#include <priority_queue>
+#include <array>
+#include <vector>
+#include <deque>
+#include <forward_list>
+#include <list>
+#include <multiset>
+#include <multimap>
+#include <unordered_set>
+#include <unordered_map>
+#include <unordered_multiset>
+#include <unordered_multimap>
+#include <stack>
+#include <queue>
+#include <priority_queue>
 
 /*** Surcharge de la focntion to_string pour fonctionner avec std::string ***/
 std::string to_string(const std::string& value) {
@@ -168,38 +168,43 @@ Digraph<T>::~Digraph() {
 /*** Modificateurs ***/
 template <class T>
 void Digraph<T>::inserer_sommet(T u) {	
-	// À compléter
+	graphe[u];
 
 }
 
 template <class T>
 void Digraph<T>::inserer_arc(T u, T v) {
-	// À compléter
+	(graphe[u]).insert(v);
+
 
 }
 
 template <class T>
 void Digraph<T>::supprimer_sommet(T u) {
-	// À compléter
+	graphe.erase(u);
 	
 }
 
 template <class T>
 void Digraph<T>::supprimer_arc(T u, T v) {
-	// À compléter
-
+	std::set<T> s = graphe[u];
+	s.remove(v);
 }
 
 /*** Fonctions pour les caractéristiques de graphe ***/
 template <class T>
 int Digraph<T>::nb_sommets() const {
-	// À compléter
-	return 0;
+	
+	return graphe.size;;
 }
 template <class T>
 int Digraph<T>::nb_arcs() const {
-	// À compléter
-	return 0;
+	int count=0;
+
+	for(const auto v : graphe){
+		count+= v.second.size();
+	}
+	return count;
 }
 
 template <class T>
