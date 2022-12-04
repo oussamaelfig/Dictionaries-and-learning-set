@@ -185,6 +185,16 @@ template <class T>
 void Digraph<T>::supprimer_sommet(T u)
 {
 	graphe.erase(u);
+
+	for (auto const &pair : graphe)
+	{
+		for (auto const &elem : pair.second)
+		{
+			if(elem == u){
+				pair->second.erase(u);
+			}
+		}
+	}
 }
 
 template <class T>
@@ -219,7 +229,7 @@ const std::set<T> Digraph<T>::predecesseurs(T u) const
 	std::set<T> p;
 
 	int index = 0;
-	for (vector<std::set<T>>::const_iterator it = graphe.begin(); it != graphe.end(); ++it, index++)
+	for (auto it = graphe.begin(); it != graphe.end(); ++it, index++)
 	{
 		for (T el : *it)
 		{
@@ -242,9 +252,12 @@ int Digraph<T>::degre_entrant(T u) const
 	int count = 0;
 	for (auto it = graphe.begin(); it != graphe.end(); ++it)
 	{
-		if (it.count(u))
+		for (auto setItem : it->second)
 		{
-			count++;
+			if (setItem == u)
+			{
+				count++;
+			}
 		}
 	}
 
@@ -254,13 +267,13 @@ int Digraph<T>::degre_entrant(T u) const
 template <class T>
 int Digraph<T>::degre_sortant(T u) const
 {
-	return graphe[u].size();
+	return graphe.at(u).size();
 }
 
 template <class T>
 bool Digraph<T>::arc(T u, T v) const
 {
-	if (graphe[u].count(v))
+	if (graphe.at(u).count(v))
 	{
 		return true;
 	}
@@ -274,7 +287,7 @@ bool Digraph<T>::arc(T u, T v) const
 template <class T>
 bool Digraph<T>::boucle(T u) const
 {
-	if (graphe[u].count(u))
+	if (graphe.at(u).count(u))
 	{
 		return true;
 	}
@@ -287,7 +300,7 @@ bool Digraph<T>::boucle(T u) const
 template <class T>
 bool Digraph<T>::puits(T u) const
 {
-	if (graphe[u].count(0))
+	if (graphe.at(u).size() == 0)
 	{
 		return true;
 	}
