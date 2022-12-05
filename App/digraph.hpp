@@ -185,14 +185,15 @@ template <class T>
 void Digraph<T>::supprimer_sommet(T u)
 {
 	graphe.erase(u);
-
-	for (auto const &pair : graphe)
+	for (auto &pair : graphe)
 	{
-		for (auto const &elem : pair.second)
+		auto i = pair.second.begin();
+		while (i != pair.second.end())
 		{
-			if(elem == u){
-				pair->second.erase(u);
-			}
+			if (*i == u)
+				i = pair.second.erase(i);
+			else
+				++i;
 		}
 	}
 }
@@ -200,7 +201,7 @@ void Digraph<T>::supprimer_sommet(T u)
 template <class T>
 void Digraph<T>::supprimer_arc(T u, T v)
 {
-	std::set<T> s = graphe[u];
+	std::set<T> &s = graphe[u];
 	s.erase(v);
 }
 
@@ -228,22 +229,21 @@ const std::set<T> Digraph<T>::predecesseurs(T u) const
 {
 	std::set<T> p;
 
-	int index = 0;
-	for (auto it = graphe.begin(); it != graphe.end(); ++it, index++)
-	{
-		for (T el : *it)
-		{
-			if (el == u)
-				p.insert(index);
-		}
-	}
+	for (auto const &[v, set] : graphe)
+		for (auto const &w : set)
+			if (u == w)
+			{
+				p.insert(v);
+				break;
+			}
+
 	return p;
 }
 
 template <class T>
 const std::set<T> Digraph<T>::successeurs(T u) const
 {
-	return graphe[u];
+	return graphe.at(u);
 }
 
 template <class T>
@@ -287,14 +287,12 @@ bool Digraph<T>::arc(T u, T v) const
 template <class T>
 bool Digraph<T>::boucle(T u) const
 {
-	if (graphe.at(u).count(u))
+	const auto it = graphe.find(u);
+	if (it == graphe.end())
 	{
-		return true;
+		return false; // there is no such vertex in the graph at all
 	}
-	else
-	{
-		return false;
-	}
+	return it->second.find(u) != it->second.end();
 }
 
 template <class T>
