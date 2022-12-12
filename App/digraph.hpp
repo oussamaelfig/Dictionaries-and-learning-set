@@ -20,15 +20,15 @@
 #include <deque>
 #include <forward_list>
 #include <list>
-//#include <multiset>
-//#include <multimap>
-//#include <unordered_set>
-//#include <unordered_map>
-//#include <unordered_multiset>
-//#include <unordered_multimap>
+// #include <multiset>
+// #include <multimap>
+// #include <unordered_set>
+// #include <unordered_map>
+// #include <unordered_multiset>
+// #include <unordered_multimap>
 #include <stack>
 #include <queue>
-//#include <priority_queue>
+// #include <priority_queue>
 
 /*** Surcharge de la focntion to_string pour fonctionner avec std::string ***/
 std::string to_string(const std::string &value)
@@ -154,6 +154,8 @@ private:
 	 * pour des exemples.
 	 */
 	std::map<T, std::set<T>> graphe;
+
+	bool chemin_existe(T u, T v) const;
 };
 
 /******* Implémentation *******/
@@ -317,16 +319,19 @@ bool Digraph<T>::contourner(T u) const
 template <class T>
 bool Digraph<T>::acyclique(T u, T v) const
 {
-	// À compléter
-	return false;
+	if(chemin_existe(u,v) && chemin_existe(v,u)){
+		return false;
+	}
+
+	return true;
 }
 
 /*** Réductions de graphes ***/
 template <class T>
 bool Digraph<T>::reduction_base()
 {
-	// À compléter
-	return false;
+	if (boucle)
+		return false;
 }
 
 template <class T>
@@ -344,6 +349,56 @@ bool Digraph<T>::reduction_avancee()
 }
 
 /*** Fonctions privées ***/
+template <class T>
+bool Digraph<T>::chemin_existe(T u, T v) const
+{
+	// Base case
+	if (u == v)
+		return true;
+
+	// Mark all the vertices as not visited
+	bool *visited = new bool[nb_sommets()];
+	for (int i = 0; i < nb_sommets(); i++)
+		visited[i] = false;
+
+	// Create a queue for BFS
+	std::list<int> queue;
+
+	// Mark the current node as visited and enqueue it
+	visited[u] = true;
+	queue.push_back(u);
+
+	// it will be used to get all adjacent vertices of a vertex
+	std::set<int>::iterator i;
+
+	while (!queue.empty())
+	{
+		// Dequeue a vertex from queue and print it
+		u = queue.front();
+		queue.pop_front();
+
+		// Get all adjacent vertices of the dequeued vertex u
+		// If a adjacent has not been visited, then mark it visited
+		// and enqueue it
+		for (i = graphe.at(u).begin(); i != graphe.at(u).end(); ++i)
+		{
+			// If this adjacent node is the destination node, then
+			// return true
+			if (*i == v)
+				return true;
+
+			// Else, continue to do BFS
+			if (!visited[*i])
+			{
+				visited[*i] = true;
+				queue.push_back(*i);
+			}
+		}
+	}
+
+	// If BFS is complete without visiting v
+	return false;
+}
 
 /*** Pour dessiner un graphe avec la commande dot ***/
 #include <iostream>
