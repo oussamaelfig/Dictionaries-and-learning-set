@@ -330,8 +330,25 @@ bool Digraph<T>::acyclique(T u, T v) const
 template <class T>
 bool Digraph<T>::reduction_base()
 {
-	if (boucle)
-		return false;
+	    std::list<T> listesommet;
+   	    bool estSuprrimer= false;
+
+    for (const auto &p: graphe) {
+        if (puits(p.first) || boucle(p.first)) {
+            listesommet.push_back(p.first);
+            estSuprrimer= true;
+        }
+
+
+    }
+    for (T sommet:listesommet) {
+        supprimer_sommet(sommet);
+    }
+    if (estSuprrimer){
+        reduction_base();
+    }
+
+    return estSuprrimer;
 }
 
 template <class T>
@@ -344,8 +361,19 @@ bool Digraph<T>::reduction_intermediaire()
 template <class T>
 bool Digraph<T>::reduction_avancee()
 {
-	// À compléter
-	return false;
+	std::set<T> temp;
+    	bool estSupprimer=false;
+    for (const auto &p: graphe) {
+       temp= successeurs(p.first);
+    for(const auto &suc:temp){
+           if (acyclique(p.first,suc)){
+               supprimer_arc(p.first,suc);
+               estSupprimer=true;
+           }
+       }
+
+    }
+    return estSupprimer;
 }
 
 /*** Fonctions privées ***/
