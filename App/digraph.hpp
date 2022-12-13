@@ -354,8 +354,38 @@ bool Digraph<T>::reduction_base()
 template <class T>
 bool Digraph<T>::reduction_intermediaire()
 {
-	// À compléter
-	return false;
+	  std::set<T> temp;
+    std::set<T> temp2;
+    std::set<T> temp3;
+
+    std::list<T> listesommet;
+    bool estSupprimer=false;
+
+    for (const auto &p: graphe) {
+         if(degre_entrant(p.first)>0 && degre_sortant(p.first)==1) {
+             temp=successeurs(p.first);
+             temp2= predecesseurs(p.first);
+             temp2.insert(temp);
+             listesommet.push_back(p.first);
+
+
+         }else if (degre_entrant(p.first)==1 && degre_sortant(p.first)>0){
+             temp=successeurs(p.first);
+             temp2= predecesseurs(p.first);
+             temp3= successeurs(temp2);
+             temp3.insert(temp);
+             listesommet.push_back(p.first);
+
+         }
+
+
+        }
+    for (T sommet:listesommet) {
+        supprimer_sommet(sommet);
+        estSupprimer=true;
+    }
+
+    return estSupprimer;
 }
 
 template <class T>
