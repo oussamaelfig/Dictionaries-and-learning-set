@@ -330,42 +330,25 @@ bool Digraph<T>::acyclique(T u, T v) const
 template <class T>
 bool Digraph<T>::reduction_base()
 {
-	  int cpt=0;
-    std::list<T> listesommet;
-    
+	   std::list<T> listesommet;
+    bool estSuprrimer= false;
 
-
-    for (const auto &p: graphe){
+    for (const auto &p: graphe) {
         if (puits(p.first) || boucle(p.first)) {
-             listesommet.push_back(p.first);
-            cpt++;
-            for (const auto &sommet: predecesseurs(p.first)) {
-
-                supprimer_arc(sommet,p.first);
-                if (puits(sommet)){
-                 cpt++;
-                 listesommet.push_back(sommet);
-                }
-
-
-            }
-
-
+            listesommet.push_back(p.first);
+            estSuprrimer= true;
         }
 
 
-
-        }
-
-
+    }
     for (T sommet:listesommet) {
         supprimer_sommet(sommet);
     }
+    if (estSuprrimer){
+        reduction_base();
+    }
 
-
-      int nbrSommetRestant =nb_sommets(); // nombre de sommet restant
-      int nbrSommetSupprimer=cpt; // nombre de sommet supprimer
-    return false;
+    return estSuprrimer;
 }
 
 template <class T>
