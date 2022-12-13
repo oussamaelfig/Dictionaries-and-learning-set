@@ -229,17 +229,17 @@ int Digraph<T>::nb_arcs() const
 template <class T>
 const std::set<T> Digraph<T>::predecesseurs(T u) const
 {
-	std::set<T> p;
+	    std::set<T> p;
 
-	for (auto const &[v, set] : graphe)
-		for (auto const &w : set)
-			if (u == w)
-			{
-				p.insert(v);
-				break;
-			}
+    for (auto  &v : graphe)
 
-	return p;
+        for (auto  &i : v.second)
+            if (u == i){
+                p.insert(v.first);
+                break;
+            }
+
+    return p;
 }
 
 template <class T>
