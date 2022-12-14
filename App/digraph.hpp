@@ -414,52 +414,52 @@ bool Digraph<T>::reduction_avancee()
 template <class T>
 bool Digraph<T>::chemin_existe(T u, T v) const
 {
-	// Base case
-	if (u == v)
-		return true;
+ if (u == v)
+        return true;
 
-	// Mark all the vertices as not visited
-	bool *visited = new bool[nb_sommets()];
-	for (int i = 0; i < nb_sommets(); i++)
-		visited[i] = false;
+    // Mark all the vertices as not visited
 
-	// Create a queue for BFS
-	std::list<int> queue;
+       std::vector<bool>visited(nb_sommets());
+    for (int i = 0; i < nb_sommets(); i++)
+        visited.at(i) = false;
 
-	// Mark the current node as visited and enqueue it
-	visited[u] = true;
-	queue.push_back(u);
+    // Create a queue for BFS
+    std::list<int> queue;
 
-	// it will be used to get all adjacent vertices of a vertex
-	std::set<int>::iterator i;
+    // Mark the current node as visited and enqueue it
+    visited.at(u) = true;
+    queue.push_back(u);
 
-	while (!queue.empty())
-	{
-		// Dequeue a vertex from queue and print it
-		u = queue.front();
-		queue.pop_front();
+    // it will be used to get all adjacent vertices of a vertex
+    std::set<int>::iterator i;
 
-		// Get all adjacent vertices of the dequeued vertex u
-		// If a adjacent has not been visited, then mark it visited
-		// and enqueue it
-		for (i = graphe.at(u).begin(); i != graphe.at(u).end(); ++i)
-		{
-			// If this adjacent node is the destination node, then
-			// return true
-			if (*i == v)
-				return true;
+    while (!queue.empty())
+    {
+        // Dequeue a vertex from queue and print it
+        u = queue.front();
+        queue.pop_front();
 
-			// Else, continue to do BFS
-			if (!visited[*i])
-			{
-				visited[*i] = true;
-				queue.push_back(*i);
-			}
-		}
-	}
+        // Get all adjacent vertices of the dequeued vertex u
+        // If a adjacent has not been visited, then mark it visited
+        // and enqueue it
+        for (i = graphe.at(u).begin(); i != graphe.at(u).end(); ++i)
+        {
+            // If this adjacent node is the destination node, then
+            // return true
+            if (*i == v)
+                return true;
 
-	// If BFS is complete without visiting v
-	return false;
+            // Else, continue to do BFS
+            if (!visited.at(*i))
+            {
+                visited.at(*i) = true;
+                queue.push_back(*i);
+            }
+        }
+    }
+
+    // If BFS is complete without visiting v
+    return false;
 }
 
 /*** Pour dessiner un graphe avec la commande dot ***/
