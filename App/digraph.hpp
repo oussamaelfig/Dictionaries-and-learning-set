@@ -363,18 +363,22 @@ bool Digraph<T>::reduction_intermediaire()
 
     for (const auto &p: graphe) {
          if(degre_entrant(p.first)>0 && degre_sortant(p.first)==1) {
-             temp=successeurs(p.first);
-             temp2= predecesseurs(p.first);
-             temp2.insert(temp);
-             listesommet.push_back(p.first);
+            listesommet.push_back(p.first);
+            succe=successeurs(p.first);
+            pred= predecesseurs(p.first);
+         //   std::cout<<p.first<<std::endl;
+            for(const auto &elt:succe) {
+                pred.insert(elt);
+                break;
+            }
 
 
          }else if (degre_entrant(p.first)==1 && degre_sortant(p.first)>0){
-             temp=successeurs(p.first);
-             temp2= predecesseurs(p.first);
-             temp3= successeurs(temp2);
-             temp3.insert(temp);
-             listesommet.push_back(p.first);
+             //temp=successeurs(p.first);
+             //temp2= predecesseurs(p.first);
+             //temp3= successeurs(temp2);
+             //temp3.insert(temp);
+            // listesommet.push_back(p.first);
 
          }
 
