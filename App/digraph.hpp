@@ -456,28 +456,36 @@ template <class T>
 bool Digraph<T>::chemin_existe(T u, T v) const
 {
 
-    if (u == v)
+     if (u == v)
         return true;
 
     // Mark all the vertices as not visited
 
-    std::vector<bool>visited(nb_sommets());
+  // std::vector<bool>visited(nb_sommets());
+   std::map<int,bool>visited;
     for (int i = 0; i < nb_sommets(); i++)
         visited[i]= false;
 
     // Create a queue for BFS
     std::list<T> queue;
 
+      int index=0;
     // Mark the current node as visited and enqueue it
+    for (auto elt:graphe) {
+        if (elt.first==u){
+            break;
+        }
+            index++;
+    }
 
+   visited.at(index) = true;
 
-    visited.at(u) = true;
 
     queue.push_back(u);
 
     // it will be used to get all adjacent vertices of a vertex
     typename std::set<T>::iterator i;
-
+     int cpt=0;
     while (!queue.empty())
     {
         // Dequeue a vertex from queue and print it
@@ -494,12 +502,22 @@ bool Digraph<T>::chemin_existe(T u, T v) const
             if (*i == v)
                 return true;
 
+            for (auto elt:graphe) {
+                if (elt.first==*i){
+                    break;
+                }
+                cpt++;
+            }
+
+
             // Else, continue to do BFS
-            if (!visited.at(*i))
+            if (!visited.at(cpt))
             {
-                visited.at(*i) = true;
+                visited.at(cpt) = true;
                 queue.push_back(*i);
             }
+
+            cpt=0;
         }
     }
 
