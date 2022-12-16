@@ -354,42 +354,83 @@ bool Digraph<T>::reduction_base()
 template <class T>
 bool Digraph<T>::reduction_intermediaire()
 {
-	  std::set<T> temp;
-    std::set<T> temp2;
-    std::set<T> temp3;
+	
+    std::set<T> succe1;
+    std::set<T> pred1;
+    std::set<T> succe2;
+    std::set<T> pred2;
+    std::set<T> succe3;
 
     std::list<T> listesommet;
-    bool estSupprimer=false;
+    bool estSupprimer = false;
 
     for (const auto &p: graphe) {
-         if(degre_entrant(p.first)>0 && degre_sortant(p.first)==1) {
-            listesommet.push_back(p.first);
-            succe=successeurs(p.first);
-            pred= predecesseurs(p.first);
-         //   std::cout<<p.first<<std::endl;
-            for(const auto &elt:succe) {
-                pred.insert(elt);
-                break;
+        
+        T sucUniq;
+        T predeUniq;
+        if (!boucle(p.first)) {
+
+
+            if (degre_entrant(p.first) > 0 && degre_sortant(p.first) == 1) {
+                listesommet.push_back(p.first); // liste des sommet a effacer
+                pred1 = predecesseurs(p.first); // liste des predecesseurs du sommet courant
+                sucUniq = retourElementPosition(p.second); //sucesseur unique
+             
+                pred1.insert(sucUniq); // on insere le successeur unique dans la liste des predeccesurs
+
+                typename std::set<T>::iterator it;
+                for (it = pred1.begin(); it != pred1.end(); ++it) {
+                  
+                    inserer_arc(*it,sucUniq);
+                 
+                }
+
+
+            } else if (degre_entrant(p.first) == 1 && degre_sortant(p.first) > 0) {
+
+                listesommet.push_back(p.first); // liste des sommets a effacer
+                pred1 = predecesseurs(p.first);
+                predeUniq = retourElementPosition(pred1); // predecceusr unique
+
+
+
+                sucUniq = retourElementPosition(p.second);
+                succe2 = successeurs(p.first);
+
+
+                typename std::set<T>::iterator it;
+                for (it = succe2.begin(); it != succe2.end(); ++it) {
+                    graphe.at(predeUniq).insert(*it);
+                }
+
+
+              
+
+
+                for (auto it:graphe) {
+                    if(it.first==predeUniq){
+                        for(auto iter:p.second){
+                            it.second.insert(iter);
+                        }
+                    }
+                }
+
             }
-
-
-         }else if (degre_entrant(p.first)==1 && degre_sortant(p.first)>0){
-             //temp=successeurs(p.first);
-             //temp2= predecesseurs(p.first);
-             //temp3= successeurs(temp2);
-             //temp3.insert(temp);
-            // listesommet.push_back(p.first);
-
-         }
-
-
         }
-    for (T sommet:listesommet) {
+
+    }
+
+    for (auto sommet: listesommet) {
         supprimer_sommet(sommet);
         estSupprimer=true;
     }
 
+    if (estSupprimer)
+        reduction_intermediaire();
+
     return estSupprimer;
+
+  
 }
 
 template <class T>
@@ -414,24 +455,28 @@ bool Digraph<T>::reduction_avancee()
 template <class T>
 bool Digraph<T>::chemin_existe(T u, T v) const
 {
- if (u == v)
+
+    if (u == v)
         return true;
 
     // Mark all the vertices as not visited
 
-       std::vector<bool>visited(nb_sommets());
+    std::vector<bool>visited(nb_sommets());
     for (int i = 0; i < nb_sommets(); i++)
-        visited.at(i) = false;
+        visited[i]= false;
 
     // Create a queue for BFS
-    std::list<int> queue;
+    std::list<T> queue;
 
     // Mark the current node as visited and enqueue it
+
+
     visited.at(u) = true;
+
     queue.push_back(u);
 
     // it will be used to get all adjacent vertices of a vertex
-    std::set<int>::iterator i;
+    typename std::set<T>::iterator i;
 
     while (!queue.empty())
     {
