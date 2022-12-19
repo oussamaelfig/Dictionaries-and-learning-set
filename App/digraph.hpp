@@ -154,6 +154,7 @@ private:
 	 * pour des exemples.
 	 */
 	std::map<T, std::set<T>> graphe;
+    	T retourElementPosition(std::set<T>);
 
 	bool chemin_existe(T u, T v) const;
 };
@@ -171,6 +172,13 @@ Digraph<T>::~Digraph()
 }
 
 /*** Modificateurs ***/
+template<class T>
+T Digraph<T>::retourElementPosition(std::set<T>p) {
+    auto it = p.begin();
+    T element;
+    if (it != p.end())  element=*it;
+    return element;
+}
 template <class T>
 void Digraph<T>::inserer_sommet(T u)
 {
