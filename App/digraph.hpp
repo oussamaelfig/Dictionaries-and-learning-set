@@ -154,7 +154,7 @@ private:
 	 * pour des exemples.
 	 */
 	std::map<T, std::set<T>> graphe;
-    	T retourElementPosition(std::set<T>);
+	T retourElementPosition(std::set<T>);
 
 	bool chemin_existe(T u, T v) const;
 };
@@ -172,12 +172,14 @@ Digraph<T>::~Digraph()
 }
 
 /*** Modificateurs ***/
-template<class T>
-T Digraph<T>::retourElementPosition(std::set<T>p) {
-    auto it = p.begin();
-    T element;
-    if (it != p.end())  element=*it;
-    return element;
+template <class T>
+T Digraph<T>::retourElementPosition(std::set<T> p)
+{
+	auto it = p.begin();
+	T element;
+	if (it != p.end())
+		element = *it;
+	return element;
 }
 template <class T>
 void Digraph<T>::inserer_sommet(T u)
@@ -237,17 +239,18 @@ int Digraph<T>::nb_arcs() const
 template <class T>
 const std::set<T> Digraph<T>::predecesseurs(T u) const
 {
-	    std::set<T> p;
+	std::set<T> p;
 
-    for (auto  &v : graphe)
+	for (auto &v : graphe)
 
-        for (auto  &i : v.second)
-            if (u == i){
-                p.insert(v.first);
-                break;
-            }
+		for (auto &i : v.second)
+			if (u == i)
+			{
+				p.insert(v.first);
+				break;
+			}
 
-    return p;
+	return p;
 }
 
 template <class T>
@@ -300,7 +303,7 @@ bool Digraph<T>::boucle(T u) const
 	const auto it = graphe.find(u);
 	if (it == graphe.end())
 	{
-		return false; // there is no such vertex in the graph at all
+		return false; // il n'y a pas du tout un tel sommet dans le graphe
 	}
 	return it->second.find(u) != it->second.end();
 }
@@ -327,7 +330,8 @@ bool Digraph<T>::contourner(T u) const
 template <class T>
 bool Digraph<T>::acyclique(T u, T v) const
 {
-	if(chemin_existe(u,v) && chemin_existe(v,u)){
+	if (chemin_existe(u, v) && chemin_existe(v, u))
+	{
 		return false;
 	}
 
@@ -338,125 +342,118 @@ bool Digraph<T>::acyclique(T u, T v) const
 template <class T>
 bool Digraph<T>::reduction_base()
 {
-	    std::list<T> listesommet;
-   	    bool estSuprrimer= false;
+	std::list<T> listeSommet;
+	bool estSuprrimer = false;
 
-    for (const auto &p: graphe) {
-        if (puits(p.first) || boucle(p.first)) {
-            listesommet.push_back(p.first);
-            estSuprrimer= true;
-        }
+	for (const auto &p : graphe)
+	{
+		if (puits(p.first) || boucle(p.first))
+		{
+			listeSommet.push_back(p.first);
+			estSuprrimer = true;
+		}
+	}
+	for (T sommet : listeSommet)
+	{
+		supprimer_sommet(sommet);
+	}
+	if (estSuprrimer)
+	{
+		reduction_base();
+	}
 
-
-    }
-    for (T sommet:listesommet) {
-        supprimer_sommet(sommet);
-    }
-    if (estSuprrimer){
-        reduction_base();
-    }
-
-    return estSuprrimer;
+	return estSuprrimer;
 }
 
 template <class T>
 bool Digraph<T>::reduction_intermediaire()
 {
-	
-    std::set<T> succe1;
-    std::set<T> pred1;
-    std::set<T> succe2;
-    std::set<T> pred2;
-    std::set<T> succe3;
 
-    std::list<T> listesommet;
-    bool estSupprimer = false;
+	std::set<T> predecc;
+	std::set<T> successeur;
+	std::list<T> listeSommet;
+	bool estSupprimer = false;
 
-    for (const auto &p: graphe) {
-        
-        T sucUniq;
-        T predeUniq;
-        if (!boucle(p.first)) {
+	for (const auto &p : graphe)
+	{
 
+		T sucUniq;
+		T predeUniq;
+		if (!boucle(p.first))
+		{
 
-            if (degre_entrant(p.first) > 0 && degre_sortant(p.first) == 1) {
-                listesommet.push_back(p.first); // liste des sommet a effacer
-                pred1 = predecesseurs(p.first); // liste des predecesseurs du sommet courant
-                sucUniq = retourElementPosition(p.second); //sucesseur unique
-             
-             
+			if (degre_entrant(p.first) > 0 && degre_sortant(p.first) == 1)
+			{
+				listeSommet.push_back(p.first);			   // liste des sommet a effacer
+				predecc = predecesseurs(p.first);		   // liste des predecesseurs du sommet courant
+				sucUniq = retourElementPosition(p.second); // sucesseur unique
 
-                typename std::set<T>::iterator it;
-                for (it = pred1.begin(); it != pred1.end(); ++it) {
-                  
-                    inserer_arc(*it,sucUniq);
-                 
-                }
+				typename std::set<T>::iterator it;
+				for (it = predecc.begin(); it != predecc.end(); ++it)
+				{
 
+					inserer_arc(*it, sucUniq);
+				}
+			}
+			else if (degre_entrant(p.first) == 1 && degre_sortant(p.first) > 0)
+			{
 
-            } else if (degre_entrant(p.first) == 1 && degre_sortant(p.first) > 0) {
+				listeSommet.push_back(p.first); // liste des sommets a effacer
+				predecc = predecesseurs(p.first);
+				predeUniq = retourElementPosition(predecc); // predecceusr unique
+				sucUniq = retourElementPosition(p.second);
+				successeur = successeurs(p.first);
 
-                listesommet.push_back(p.first); // liste des sommets a effacer
-                pred1 = predecesseurs(p.first);
-                predeUniq = retourElementPosition(pred1); // predecceusr unique
+				typename std::set<T>::iterator it;
+				for (it = successeur.begin(); it != successeur.end(); ++it)
+				{
+					graphe.at(predeUniq).insert(*it);
+				}
 
+				for (auto it : graphe)
+				{
+					if (it.first == predeUniq)
+					{
+						for (auto iter : p.second)
+						{
+							it.second.insert(iter);
+						}
+					}
+				}
+			}
+		}
+	}
 
+	for (auto sommet : listeSommet)
+	{
+		supprimer_sommet(sommet);
+		estSupprimer = true;
+	}
 
-                sucUniq = retourElementPosition(p.second);
-                succe2 = successeurs(p.first);
+	if (estSupprimer)
+		reduction_intermediaire();
 
-
-                typename std::set<T>::iterator it;
-                for (it = succe2.begin(); it != succe2.end(); ++it) {
-                    graphe.at(predeUniq).insert(*it);
-                }
-
-
-              
-
-
-                for (auto it:graphe) {
-                    if(it.first==predeUniq){
-                        for(auto iter:p.second){
-                            it.second.insert(iter);
-                        }
-                    }
-                }
-
-            }
-        }
-
-    }
-
-    for (auto sommet: listesommet) {
-        supprimer_sommet(sommet);
-        estSupprimer=true;
-    }
-
-    if (estSupprimer)
-        reduction_intermediaire();
-
-    return estSupprimer;
-
-  
+	return estSupprimer;
 }
 
 template <class T>
 bool Digraph<T>::reduction_avancee()
 {
-	std::set<T> temp;
-    	bool estSupprimer=false;
-    for (const auto &p: graphe) {
-       temp= successeurs(p.first);
-    for(const auto &suc:temp){
-           if (acyclique(p.first,suc)){
-               supprimer_arc(p.first,suc);
-               estSupprimer=true;
-           }
-       }
-
-    }
-    return estSupprimer;
+	std::set<T> temporaire;
+	bool estSupprimer = false;
+	for (const auto &p : graphe)
+	{
+		temporaire = successeurs(p.first);
+		for (const auto &suc : temporaire)
+		{
+			if (acyclique(p.first, suc))
+			{
+				supprimer_arc(p.first, suc);
+				estSupprimer = true;
+			}
+		}
+	}
+	return estSupprimer;
 }
 
 /*** Fonctions privées ***/
@@ -464,73 +461,72 @@ template <class T>
 bool Digraph<T>::chemin_existe(T u, T v) const
 {
 
-     if (u == v)
-        return true;
+	if (u == v)
+		return true;
 
-    // Mark all the vertices as not visited
+	// Marque tous les sommets comme non visités
+	std::map<int, bool> visited;
+	for (int i = 0; i < nb_sommets(); i++)
+		visited[i] = false;
 
-  // std::vector<bool>visited(nb_sommets());
-   std::map<int,bool>visited;
-    for (int i = 0; i < nb_sommets(); i++)
-        visited[i]= false;
+	// Créer une file d'attente pour BFS
+	std::list<T> queue;
 
-    // Create a queue for BFS
-    std::list<T> queue;
+	int index = 0;
+	// Marque le nœud actuel comme visité et le met en file d'attente
+	for (auto elt : graphe)
+	{
+		if (elt.first == u)
+		{
+			break;
+		}
+		index++;
+	}
 
-      int index=0;
-    // Mark the current node as visited and enqueue it
-    for (auto elt:graphe) {
-        if (elt.first==u){
-            break;
-        }
-            index++;
-    }
+	visited.at(index) = true;
 
-   visited.at(index) = true;
+	queue.push_back(u);
 
+	// il sera utilisé pour obtenir tous les sommets adjacents d'un sommet
+	typename std::set<T>::iterator i;
+	int cpt = 0;
+	while (!queue.empty())
+	{
+		// Retirer un sommet de la file d'attente
+		u = queue.front();
+		queue.pop_front();
 
-    queue.push_back(u);
+		// Récupère tous les sommets adjacents du sommet retiré de la file d'attente u
+		// Si un adjacent n'a pas été visité, alors marquez-le comme visité
+		// et le mettre en file d'attente
+		for (i = graphe.at(u).begin(); i != graphe.at(u).end(); ++i)
+		{
+			// Si ce nœud adjacent est le nœud de destination, alors
+			// renvoie vrai
+			if (*i == v)
+				return true;
 
-    // it will be used to get all adjacent vertices of a vertex
-    typename std::set<T>::iterator i;
-     int cpt=0;
-    while (!queue.empty())
-    {
-        // Dequeue a vertex from queue and print it
-        u = queue.front();
-        queue.pop_front();
+			for (auto elt : graphe)
+			{
+				if (elt.first == *i)
+				{
+					break;
+				}
+				cpt++;
+			}
 
-        // Get all adjacent vertices of the dequeued vertex u
-        // If a adjacent has not been visited, then mark it visited
-        // and enqueue it
-        for (i = graphe.at(u).begin(); i != graphe.at(u).end(); ++i)
-        {
-            // If this adjacent node is the destination node, then
-            // return true
-            if (*i == v)
-                return true;
+			// Sinon, continuer
+			if (!visited.at(cpt))
+			{
+				visited.at(cpt) = true;
+				queue.push_back(*i);
+			}
 
-            for (auto elt:graphe) {
-                if (elt.first==*i){
-                    break;
-                }
-                cpt++;
-            }
+			cpt = 0;
+		}
+	}
 
-
-            // Else, continue to do BFS
-            if (!visited.at(cpt))
-            {
-                visited.at(cpt) = true;
-                queue.push_back(*i);
-            }
-
-            cpt=0;
-        }
-    }
-
-    // If BFS is complete without visiting v
-    return false;
+	return false;
 }
 
 /*** Pour dessiner un graphe avec la commande dot ***/
