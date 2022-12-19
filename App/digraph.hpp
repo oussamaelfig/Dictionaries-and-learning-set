@@ -376,7 +376,7 @@ bool Digraph<T>::reduction_intermediaire()
                 pred1 = predecesseurs(p.first); // liste des predecesseurs du sommet courant
                 sucUniq = retourElementPosition(p.second); //sucesseur unique
              
-                pred1.insert(sucUniq); // on insere le successeur unique dans la liste des predeccesurs
+             
 
                 typename std::set<T>::iterator it;
                 for (it = pred1.begin(); it != pred1.end(); ++it) {
